@@ -44,10 +44,10 @@ def create_application() -> FastAPI:
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origins=[os.getenv("FRONTEND_URL")],
         allow_credentials=True,
-        allow_methods=settings.CORS_METHODS,
-        allow_headers=settings.CORS_HEADERS,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     # Include routers
