@@ -19,6 +19,7 @@ from app.models.asset import AssetType
 import jwt
 from jwt.exceptions import PyJWTError
 from app.core.config import settings
+from mangum import Mangum
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -44,7 +45,7 @@ def create_application() -> FastAPI:
     # Configure CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[os.getenv("FRONTEND_URL")],
+        allow_origins=["*"],  # For simplicity, replace with your frontend URL in production
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -995,6 +996,9 @@ async def debug_asset_types():
         return types
     except Exception as e:
         return {"error": str(e)}
+
+# Create handler for Vercel serverless function
+handler = Mangum(app)
 
 if __name__ == "__main__":
     import uvicorn
