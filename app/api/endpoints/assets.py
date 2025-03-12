@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
-from typing import List
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Query
+from typing import List, Optional
+from pydantic import BaseModel
 from datetime import datetime
 from app.models.asset import (
     Organization,
@@ -16,6 +17,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# Add the missing model definition
+class OrganizationCreate(BaseModel):
+    name: str
+    registration_number: Optional[str] = None
+    address: Optional[str] = None
 
 @router.get("/organizations", response_model=List[Organization])
 async def get_organizations(current_user: str = Depends(get_current_user)):

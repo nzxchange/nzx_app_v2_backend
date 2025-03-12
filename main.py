@@ -20,6 +20,7 @@ import jwt
 from jwt.exceptions import PyJWTError
 from app.core.config import settings
 from mangum import Mangum
+import traceback
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -202,7 +203,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 # Root endpoint
 @app.get("/")
 async def root():
-    return {"message": "NZX Energy Platform API"}
+    return {"message": "Welcome to the API"}
 
 # Test endpoint
 @app.get("/api/test")
@@ -998,7 +999,25 @@ async def debug_asset_types():
         return {"error": str(e)}
 
 # Create handler for Vercel serverless function
-handler = Mangum(app)
+try:
+    handler = Mangum(app)
+except Exception as e:
+    print(f"Error initializing Mangum handler: {str(e)}")
+    traceback.print_exc()
+    
+    # Create a simple handler that returns the error
+    def handler(event, context):
+        return {
+            "statusCode": 500,
+            "body": json.dumps({
+                "error": "Server initialization failed",
+                "details": str(e),
+                "traceback": traceback.format_exc()
+            }),
+            "headers": {
+                "Content-Type": "application/json"
+            }
+        }
 
 if __name__ == "__main__":
     import uvicorn

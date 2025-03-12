@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 from typing import Optional, List
+import json
 
 class Settings(BaseSettings):
     SUPABASE_URL: str
@@ -10,10 +11,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     
     # CORS settings
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:3000" if ENVIRONMENT == "development" 
-        else "https://app.netzeroxchange.com"
-    ]
+    CORS_ORIGINS: List[str] = ["*"]  # Default to allowing all origins
     CORS_METHODS: List[str] = ["*"]
     CORS_HEADERS: List[str] = ["*"]
     
@@ -21,10 +19,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "NZX Energy Platform"
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        extra = "allow"  # Allow extra fields
+    # Override how this field is parsed from environment variables
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8"
+    }
 
 @lru_cache()
 def get_settings() -> Settings:
