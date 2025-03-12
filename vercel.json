@@ -2,18 +2,18 @@
     "version": 2,
     "builds": [
       {
-        "src": "simple.py",
+        "src": "main.py",
         "use": "@vercel/python"
       }
     ],
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "simple.py"
+        "dest": "main.py"
       }
     ],
     "functions": {
-      "simple.py": {
+      "main.py": {
         "memory": 1024
       }
     }
