@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "start": "python start.py",
+    "start:dev": "python start.py --env development",
+    "start:prod": "python start.py --env production"
+  }
+} 
