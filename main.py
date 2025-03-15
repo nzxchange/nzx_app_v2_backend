@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Dict, Any
@@ -58,6 +58,28 @@ async def generic_exception_handler(request, exc):
         status_code=500,
         content={"detail": "Internal server error"}
     )
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)}
+    )
+
+@app.middleware("http")
+async def check_supabase_client(request: Request, call_next):
+    try:
+        from app.core.db import supabase
+        if not supabase:
+            raise HTTPException(status_code=500, detail="Database client not initialized")
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        logger.error(f"Middleware error: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal server error"}
+        )
 
 # Create handler for Vercel
 handler = Mangum(app)
