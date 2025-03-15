@@ -12,19 +12,23 @@ logger = logging.getLogger(__name__)
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
 
-logger.info(f"Initializing Supabase with URL: {supabase_url[:10]}...")
+logger.info(f"Initializing Supabase with URL: {supabase_url[:10] if supabase_url else 'Not set'}...")
 
 # Initialize Supabase client
 try:
     if not supabase_url or not supabase_key:
-        raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set in environment variables")
-        
-    supabase = create_client(supabase_url, supabase_key)
-    
-    # Test the connection
-    test_query = supabase.table("portfolios").select("count").execute()
-    logger.info("Supabase connection test successful")
-    
+        logger.warning("SUPABASE_URL or SUPABASE_KEY not set")
+        supabase = None
+    else:
+        supabase = create_client(supabase_url, supabase_key)
+        logger.info("Supabase client initialized")
 except Exception as e:
     logger.error(f"Error initializing Supabase client: {str(e)}")
-    raise RuntimeError(f"Supabase client not initialized properly. Error: {str(e)}") 
+    supabase = None
+
+# Test the connection
+if supabase:
+    test_query = supabase.table("portfolios").select("count").execute()
+    logger.info("Supabase connection test successful")
+else:
+    logger.warning("Supabase client not initialized, skipping connection test") 

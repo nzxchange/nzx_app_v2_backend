@@ -2,14 +2,18 @@
     "version": 2,
     "builds": [
       {
-        "src": "api_endpoints.py",
+        "src": "main.py",
         "use": "@vercel/python"
       }
     ],
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "api_endpoints.py"
+        "dest": "main.py"
       }
-    ]
+    ],
+    "env": {
+      "PYTHONUNBUFFERED": "1",
+      "ENVIRONMENT": "production"
+    }
 }
