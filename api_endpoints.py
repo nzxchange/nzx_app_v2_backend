@@ -5,6 +5,7 @@ import logging
 import os
 import time
 import json
+from main import app, handler
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
