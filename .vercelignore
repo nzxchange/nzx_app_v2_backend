@@ -7,4 +7,6 @@ venv
 .git
 .gitignore
 .pytest_cache
-test_* 
+test_*
+README.md
+tests 

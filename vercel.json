@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "main.py",
+        "src": "api.py",
         "use": "@vercel/python",
         "config": { "runtime": "python3.9" }
       }
@@ -10,14 +10,10 @@
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "main.py"
+        "dest": "api.py"
       }
     ],
     "env": {
-      "PYTHONUNBUFFERED": "1",
-      "ENVIRONMENT": "production",
-      "SUPABASE_URL": "@supabase_url",
-      "SUPABASE_KEY": "@supabase_key",
-      "SUPABASE_JWT_SECRET": "@supabase_jwt_secret"
+      "PYTHONUNBUFFERED": "1"
     }
 }
