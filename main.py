@@ -4,6 +4,7 @@ from app.api.api import api_router
 from app.core.config import settings
 import logging
 import time
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -61,9 +62,13 @@ async def debug_simple():
 
 if __name__ == "__main__":
     import uvicorn
+    
+    # Get port from environment variable (for Render)
+    port = int(os.environ.get("PORT", settings.PORT))
+    
     uvicorn.run(
         "main:app",
-        host="127.0.0.1",
-        port=settings.PORT,
+        host="0.0.0.0",  # IMPORTANT: Changed from 127.0.0.1 to 0.0.0.0
+        port=port,
         reload=settings.DEBUG
     )
