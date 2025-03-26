@@ -69,9 +69,3 @@ async def list_routes():
 async def debug_simple():
     print("Simple debug endpoint called")
     return {"status": "ok", "timestamp": time.time()}
-
-if __name__ == "__main__":
-    host = os.environ.get("HOST", "0.0.0.0")
-    port = int(os.environ.get("PORT", settings.PORT))
-    print(f"Starting server on {host}:{port}")
-    uvicorn.run("main:app", host=host, port=port)
