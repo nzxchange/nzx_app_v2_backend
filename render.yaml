@@ -2,15 +2,14 @@ services:
   - type: web
     name: nzx-api
     env: python
-    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.0
       - key: ENVIRONMENT
         value: production
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_KEY
-        sync: false 
+        sync: false
+      - key: CORS_ORIGINS_STR
+        value: https://app.netzeroxchange.com 

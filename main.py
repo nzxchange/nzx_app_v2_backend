@@ -5,15 +5,25 @@ from app.core.config import settings
 import logging
 import time
 import os
+import uvicorn
+from contextlib import asynccontextmanager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Set up
+    print(f"Starting application with CORS origins: {settings.CORS_ORIGINS}")
+    yield
+    # Clean up
+
 app = FastAPI(
     title="NZX API",
     description="API for NetZeroXchange platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Configure CORS
@@ -61,14 +71,7 @@ async def debug_simple():
     return {"status": "ok", "timestamp": time.time()}
 
 if __name__ == "__main__":
-    import uvicorn
-    
-    # Get port from environment variable (for Render)
+    host = os.environ.get("HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", settings.PORT))
-    
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",  # IMPORTANT: Changed from 127.0.0.1 to 0.0.0.0
-        port=port,
-        reload=settings.DEBUG
-    )
+    print(f"Starting server on {host}:{port}")
+    uvicorn.run("main:app", host=host, port=port)

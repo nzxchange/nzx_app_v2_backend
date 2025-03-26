@@ -4,6 +4,7 @@ import logging
 from dotenv import load_dotenv
 import time
 import httpx
+from app.core.config import settings
 
 # Load environment variables
 load_dotenv()
@@ -39,9 +40,21 @@ def create_supabase_client(retries=3, delay=1):
             logger.error(f"Failed to initialize Supabase client: {str(e)}")
             raise
 
+def get_supabase():
+    supabase_url = os.environ.get("SUPABASE_URL", settings.SUPABASE_URL)
+    supabase_key = os.environ.get("SUPABASE_KEY", settings.SUPABASE_KEY)
+    
+    logger.info(f"Initializing Supabase client with URL: {supabase_url}")
+    
+    try:
+        return create_client(supabase_url, supabase_key)
+    except Exception as e:
+        logger.error(f"Error creating Supabase client: {str(e)}")
+        raise
+
 # Initialize the client
 try:
-    supabase = create_supabase_client()
+    supabase = get_supabase()
 except Exception as e:
     logger.error(f"Could not initialize Supabase: {str(e)}")
     # In production, we might want to handle this more gracefully
