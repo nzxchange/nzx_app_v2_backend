@@ -25,44 +25,34 @@ def parse_cors_origin(v: Any) -> List[str]:
     return [v]
 
 class Settings(BaseSettings):
+    # API Settings
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "NZX API"
+    
+    # Environment
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = ENVIRONMENT == "development"
+    PORT: int = 8000
+    
+    # CORS Settings
+    CORS_ORIGINS_STR: str = "http://localhost:3000,https://app.netzeroxchange.com"
+    CORS_METHODS: str = "*"
+    CORS_HEADERS: str = "*"
+    
+    # Supabase
     SUPABASE_URL: str
     SUPABASE_KEY: str
-    SUPABASE_JWT_SECRET: Optional[str] = None
-    FRONTEND_URL: Optional[str] = "http://localhost:3000"
-    ENVIRONMENT: str = "development"
-    CORS_ORIGINS: Any = "*"
-    CORS_METHODS: Any = ["*"]
-    CORS_HEADERS: Any = ["*"]
-    
-    # Different config for Pydantic v1 vs v2
-    if USING_V1:
-        class Config:
-            env_file = ".env.development"
-            env_file_encoding = "utf-8"
-            
-            @classmethod
-            def customise_sources(cls, init_settings, env_settings, file_secret_settings):
-                # Prioritize environment variables over .env file
-                return env_settings, init_settings, file_secret_settings
-    else:
-        # Pydantic v2 configuration
-        model_config = SettingsConfigDict(
-            env_file=".env.development", 
-            env_file_encoding="utf-8",
-            extra="ignore"
-        )
-        
-        # Use field validators for Pydantic v2
-        @field_validator("CORS_ORIGINS", "CORS_METHODS", "CORS_HEADERS", mode="before")
-        @classmethod
-        def parse_cors_values(cls, v):
-            return parse_cors_origin(v)
+    SUPABASE_JWT_SECRET: str | None = None
 
-    def get_cors_origins(self) -> List[str]:
-        """Safe method to get CORS origins regardless of how they're stored"""
-        if isinstance(self.CORS_ORIGINS, list):
-            return self.CORS_ORIGINS
-        return parse_cors_origin(self.CORS_ORIGINS)
+    @property
+    def CORS_ORIGINS(self) -> List[str]:
+        """Parse CORS origins from environment variable or use default"""
+        origins = os.getenv("CORS_ORIGINS", self.CORS_ORIGINS_STR)
+        return [origin.strip() for origin in origins.split(",")]
+
+    class Config:
+        env_file = ".env.development" if os.getenv("ENVIRONMENT") == "development" else ".env"
+        case_sensitive = True
 
 @lru_cache()
 def get_settings() -> Settings:

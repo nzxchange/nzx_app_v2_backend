@@ -1,12 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from mangum import Mangum
-import logging
 import os
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import json
 
 # Create FastAPI app - keeping it minimal for serverless
 app = FastAPI(title="NZX API")
@@ -46,5 +41,37 @@ async def debug_env():
         "env": os.environ.get("ENVIRONMENT", "production")
     }
 
-# Create handler for Vercel serverless
-handler = Mangum(app) 
+# Define a direct handler for Vercel without using Mangum
+def handler(event, context):
+    """Pure Python handler for Vercel serverless"""
+    # Simple static path mapping
+    path = event.get('path', '/')
+    
+    if path == '/':
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"message": "NZX API is running", "version": "0.1.0"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    elif path == '/api/health':
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"status": "ok", "environment": os.environ.get("ENVIRONMENT", "production")}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    elif path == '/api/debug/env':
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "supabase_url_set": bool(os.environ.get("SUPABASE_URL")),
+                "supabase_key_set": bool(os.environ.get("SUPABASE_KEY")),
+                "env": os.environ.get("ENVIRONMENT", "production")
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    else:
+        return {
+            "statusCode": 404,
+            "body": json.dumps({"error": "Not found"}),
+            "headers": {"Content-Type": "application/json"}
+        } 

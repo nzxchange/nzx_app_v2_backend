@@ -1,34 +1,57 @@
 from fastapi import APIRouter
-from app.api.endpoints import assets, auth, debug
+from app.api.endpoints import (
+    auth,
+    assets,
+    portfolios,
+    organizations,
+    users,
+    debug
+)
 from datetime import datetime
 import os
 
 api_router = APIRouter()
 
-# Core business endpoints
+# Auth routes
 api_router.include_router(
-    assets.router, 
-    prefix="/assets", 
-    tags=["assets"]
-)
-
-api_router.include_router(
-    auth.router, 
-    prefix="/auth", 
+    auth.router,
+    prefix="/auth",
     tags=["auth"]
 )
 
-# Remove all duplicate routes and keep only these core endpoints:
-# /assets/* - All asset related operations
-# /auth/* - All authentication operations
-# /debug/* - Only in development mode
+# Asset management routes
+api_router.include_router(
+    assets.router,
+    prefix="/assets",
+    tags=["assets"]
+)
 
-# Debug routes only in development
-from app.core.config import settings
-if settings.ENVIRONMENT == "development":
+# Portfolio routes
+api_router.include_router(
+    portfolios.router,
+    prefix="/portfolios",
+    tags=["portfolios"]
+)
+
+# Organization routes
+api_router.include_router(
+    organizations.router,
+    prefix="/organizations",
+    tags=["organizations"]
+)
+
+# User routes
+api_router.include_router(
+    users.router,
+    prefix="/users",
+    tags=["users"]
+)
+
+# Debug routes (only in development)
+if os.getenv("ENVIRONMENT") == "development":
     api_router.include_router(
-        debug.router, 
-        prefix="/debug", 
+        debug.router,
+        prefix="/debug",
         tags=["debug"]
     )
 

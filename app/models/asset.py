@@ -10,12 +10,12 @@ class UserRole(str, Enum):
     consultant = "consultant"
 
 class AssetType(str, Enum):
-    office = "office"
-    retail = "retail"
-    industrial = "industrial"
-    residential = "residential"
-    mixed_use = "mixed_use"
     commercial = "commercial"
+    residential = "residential"
+    industrial = "industrial"
+    retail = "retail"
+    office = "office"
+    mixed_use = "mixed_use"
 
 class Organization(BaseModel):
     id: Optional[str] = None
@@ -33,18 +33,25 @@ class Portfolio(BaseModel):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-class Asset(BaseModel):
-    id: Optional[str] = None
-    portfolio_id: str
+class AssetBase(BaseModel):
     name: str
-    asset_type: AssetType
+    description: Optional[str] = None
     address: str
-    total_area: float
-    year_built: Optional[int] = None
-    energy_rating: Optional[str] = None
+    asset_type: AssetType
+    portfolio_id: str
+    floor_area: Optional[float] = None
+    occupancy_rate: Optional[float] = None
+
+class AssetCreate(AssetBase):
+    pass
+
+class Asset(AssetBase):
+    id: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    organization_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
 
 class AssetTenant(BaseModel):
     id: Optional[str] = None
