@@ -35,7 +35,10 @@ class Settings(BaseSettings):
     PORT: int = 8000
     
     # CORS Settings
-    CORS_ORIGINS_STR: str = "https://app.netzeroxchange.com,http://localhost:3000"
+    CORS_ORIGINS_STR: str = (
+        "https://app.netzeroxchange.com,"
+        "http://localhost:3000"
+    )
     CORS_METHODS: str = "*"
     CORS_HEADERS: str = "*"
     

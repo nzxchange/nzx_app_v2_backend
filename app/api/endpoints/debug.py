@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 import threading
 import os
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -103,4 +104,16 @@ async def check_environment():
         "environment": os.getenv("ENVIRONMENT", "unknown"),
         "env_vars": env_vars,
         "supabase_url": os.getenv("SUPABASE_URL", "not set")
+    }
+
+@router.get("/test-assets-types")
+async def test_assets_types():
+    """Test endpoint for asset types"""
+    return {
+        "status": "ok",
+        "message": "Debug endpoint working",
+        "cors_origins": settings.CORS_ORIGINS,
+        "test_types": [
+            {"id": "test", "name": "Test"}
+        ]
     } 

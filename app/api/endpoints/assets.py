@@ -184,19 +184,24 @@ async def create_portfolio(portfolio: Portfolio, current_user: str = Depends(get
 @router.get("/types")
 async def get_asset_types():
     """Get all available asset types"""
+    logger.info("Asset types endpoint called")
     try:
-        # Hardcode the types for now to fix the immediate issue
-        return [
+        types = [
             {"id": "commercial", "name": "Commercial"},
             {"id": "residential", "name": "Residential"},
             {"id": "industrial", "name": "Industrial"},
-            {"id": "retail", "name": "Retail"},
+            {"id": "retail", name: "Retail"},
             {"id": "office", "name": "Office"},
             {"id": "mixed_use", "name": "Mixed Use"}
         ]
+        logger.info(f"Returning asset types: {types}")
+        return types
     except Exception as e:
         logger.error(f"Error getting asset types: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(
+            status_code=500,
+            detail={"message": "Internal server error", "error": str(e)}
+        )
 
 @router.get("/", response_model=List[Asset])
 async def get_assets(
