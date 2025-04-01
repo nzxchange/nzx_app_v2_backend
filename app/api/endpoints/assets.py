@@ -190,7 +190,7 @@ async def get_asset_types():
             {"id": "commercial", "name": "Commercial"},
             {"id": "residential", "name": "Residential"},
             {"id": "industrial", "name": "Industrial"},
-            {"id": "retail", name: "Retail"},
+            {"id": "retail", "name": "Retail"},
             {"id": "office", "name": "Office"},
             {"id": "mixed_use", "name": "Mixed Use"}
         ]

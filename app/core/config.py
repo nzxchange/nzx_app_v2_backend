@@ -37,7 +37,8 @@ class Settings(BaseSettings):
     # CORS Settings
     CORS_ORIGINS_STR: str = (
         "https://app.netzeroxchange.com,"
-        "http://localhost:3000"
+        "http://localhost:3000,"
+        "https://netzeroxchange.com"
     )
     CORS_METHODS: str = "*"
     CORS_HEADERS: str = "*"
